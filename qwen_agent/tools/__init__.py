@@ -29,6 +29,7 @@ from .web_extractor import WebExtractor
 from .mcp_manager import MCPManager
 from .web_search import WebSearch
 from .text_to_speech import TextToSpeech
+from .arabic_text_processor import ArabicTextProcessor
 
 __all__ = [
     'BaseTool',
@@ -52,4 +53,5 @@ __all__ = [
     'MCPManager',
     'WebSearch',
     'TextToSpeech',
+    'ArabicTextProcessor',
 ]
