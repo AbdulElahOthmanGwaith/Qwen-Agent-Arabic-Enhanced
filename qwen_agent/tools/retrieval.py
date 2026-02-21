@@ -19,6 +19,7 @@ import json5
 from qwen_agent.settings import DEFAULT_MAX_REF_TOKEN, DEFAULT_PARSER_PAGE_SIZE, DEFAULT_RAG_SEARCHERS
 from qwen_agent.tools.base import TOOL_REGISTRY, BaseTool, register_tool
 from qwen_agent.tools.doc_parser import DocParser, Record
+from qwen_agent.tools.arabic_doc_parser import ArabicDocParser
 from qwen_agent.tools.simple_doc_parser import PARSER_SUPPORTED_FILE_TYPES
 
 
@@ -40,7 +41,7 @@ def _check_deps_for_rag():
 
 @register_tool('retrieval')
 class Retrieval(BaseTool):
-    description = f"从给定文件列表中检索出和问题相关的内容，支持文件类型包括：{' / '.join(PARSER_SUPPORTED_FILE_TYPES)}"
+    description = f"Retrieves content related to the query from a given list of files. Supported file types include: {' / '.join(PARSER_SUPPORTED_FILE_TYPES)}. Supports Arabic documents."
     parameters = {
         'type': 'object',
         'properties': {
@@ -63,11 +64,14 @@ class Retrieval(BaseTool):
         'required': ['query', 'files'],
     }
 
-    def __init__(self, cfg: Optional[Dict] = None):
+    def __init__(self, cfg: Optional[Dict] = None, lang: str = 'en'):
         super().__init__(cfg)
         self.max_ref_token: int = self.cfg.get('max_ref_token', DEFAULT_MAX_REF_TOKEN)
         self.parser_page_size: int = self.cfg.get('parser_page_size', DEFAULT_PARSER_PAGE_SIZE)
-        self.doc_parse = DocParser({'max_ref_token': self.max_ref_token, 'parser_page_size': self.parser_page_size})
+        if lang == 'ar':
+            self.doc_parse = ArabicDocParser({'max_ref_token': self.max_ref_token, 'parser_page_size': self.parser_page_size})
+        else:
+            self.doc_parse = DocParser({'max_ref_token': self.max_ref_token, 'parser_page_size': self.parser_page_size})
 
         self.rag_searchers = self.cfg.get('rag_searchers', DEFAULT_RAG_SEARCHERS)
         if len(self.rag_searchers) == 1:

@@ -34,6 +34,7 @@ class FnCallAgent(Agent):
                  name: Optional[str] = None,
                  description: Optional[str] = None,
                  files: Optional[List[str]] = None,
+                 lang: str = 'en',
                  **kwargs):
         """Initialization the agent.
 
@@ -68,7 +69,7 @@ class FnCallAgent(Agent):
                     mem_llm = None
             else:
                 mem_llm = self.llm
-            self.mem = Memory(llm=mem_llm, files=files, **kwargs)
+            self.mem = Memory(llm=mem_llm, files=files, lang=lang, **kwargs)
 
     def _run(self, messages: List[Message], lang: Literal['en', 'zh'] = 'en', **kwargs) -> Iterator[List[Message]]:
         messages = copy.deepcopy(messages)

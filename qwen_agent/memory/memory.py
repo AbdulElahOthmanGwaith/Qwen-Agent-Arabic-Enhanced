@@ -40,7 +40,8 @@ class Memory(Agent):
                  llm: Optional[Union[Dict, BaseChatModel]] = None,
                  system_message: Optional[str] = DEFAULT_SYSTEM_MESSAGE,
                  files: Optional[List[str]] = None,
-                 rag_cfg: Optional[Dict] = None):
+                 rag_cfg: Optional[Dict] = None,
+                 lang: str = 'en'):
         """Initialization the memory.
 
         Args:
@@ -68,6 +69,7 @@ class Memory(Agent):
             'max_ref_token': self.max_ref_token,
             'parser_page_size': self.parser_page_size,
             'rag_searchers': self.rag_searchers,
+            'lang': lang,
         }, {
             'name': 'doc_parser',
             'max_ref_token': self.max_ref_token,
@@ -136,6 +138,7 @@ class Memory(Agent):
                     'query': query,
                     'files': rag_files
                 },
+                lang=lang,
                 **kwargs,
             )
             if not isinstance(content, str):

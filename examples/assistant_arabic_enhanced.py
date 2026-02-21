@@ -57,8 +57,9 @@ def main():
         llm=llm_cfg,
         system_message=system_instruction,
         function_list=tools,
-        name='مساعد قوي',
-        description='مساعد ذكي يدعم اللغة العربية بشكل كامل'
+        name=\'مساعد قوي\',
+        description=\'مساعد ذكي يدعم اللغة العربية بشكل كامل\',
+        lang=\'ar\'
     )
 
     # Run the chatbot
@@ -117,8 +118,9 @@ def example_with_gui():
         llm=llm_cfg,
         system_message=system_instruction,
         function_list=tools,
-        name='مساعد قوي',
-        description='مساعد ذكي يدعم اللغة العربية'
+        name=\'مساعد قوي\',
+        description=\'مساعد ذكي يدعم اللغة العربية\',
+        lang=\'ar\'
     )
 
     # Configure the chatbot UI
