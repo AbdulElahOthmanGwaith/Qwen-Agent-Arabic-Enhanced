@@ -28,6 +28,7 @@ from .storage import Storage
 from .web_extractor import WebExtractor
 from .mcp_manager import MCPManager
 from .web_search import WebSearch
+from .text_to_speech import TextToSpeech
 
 __all__ = [
     'BaseTool',
@@ -50,4 +51,5 @@ __all__ = [
     'PythonExecutor',
     'MCPManager',
     'WebSearch',
+    'TextToSpeech',
 ]

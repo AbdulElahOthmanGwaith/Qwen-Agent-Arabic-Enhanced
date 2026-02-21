@@ -26,30 +26,31 @@ from qwen_agent.utils.utils import get_basename_from_url, print_traceback
 
 KNOWLEDGE_TEMPLATE_ZH = """# 知识库
 
-{knowledge}"""
-
-KNOWLEDGE_TEMPLATE_EN = """# Knowledge Base
+{knowKNOWLEDGE_TEMPLATE_EN = """# Knowledge Base
 
 {knowledge}"""
 
-KNOWLEDGE_TEMPLATE = {'zh': KNOWLEDGE_TEMPLATE_ZH, 'en': KNOWLEDGE_TEMPLATE_EN}
+KNOWLEDGE_TEMPLATE_AR = """# قاعدة المعرفة
 
+{knowledge}"""
+
+KNOWLEDGE_TEMPLATE = {'zh': KNOWLEDGE_TEMPLATE_ZH, 'en': KNOWLEDGE_TEMPLATE_EN, 'ar': KNOWLEDGE_TEMPLATE_AR}
 KNOWLEDGE_SNIPPET_ZH = """## 来自 {source} 的内容：
 
 ```
-{content}
-```"""
-
-KNOWLEDGE_SNIPPET_EN = """## The content from {source}:
+{content}KNOWLEDGE_SNIPPET_EN = """## The content from {source}:
 
 ```
 {content}
 ```"""
 
-KNOWLEDGE_SNIPPET = {'zh': KNOWLEDGE_SNIPPET_ZH, 'en': KNOWLEDGE_SNIPPET_EN}
+KNOWLEDGE_SNIPPET_AR = """## المحتوى من {source}:
 
+```
+{content}
+```"""
 
-def format_knowledge_to_source_and_content(result: Union[str, List[dict]]) -> List[dict]:
+KNOWLEDGE_SNIPPET = {'zh': KNOWLEDGE_SNIPPET_ZH, 'en': KNOWLEDGE_SNIPPET_EN, 'ar': KNOWLEDGE_SNIPPET_AR}rmat_knowledge_to_source_and_content(result: Union[str, List[dict]]) -> List[dict]:
     knowledge = []
     if isinstance(result, str):
         result = f'{result}'.strip()
@@ -95,14 +96,11 @@ class Assistant(FnCallAgent):
                          name=name,
                          description=description,
                          files=files,
-                         rag_cfg=rag_cfg)
-
-    def _run(self,
+                         rag_cfg=rag_c    def _run(self,
              messages: List[Message],
-             lang: Literal['en', 'zh'] = 'en',
+             lang: Literal['en', 'zh', 'ar'] = 'en',
              knowledge: str = '',
-             **kwargs) -> Iterator[List[Message]]:
-        """Q&A with RAG and tool use abilities.
+             **kwargs) -> Iterator[List[Message]]:"Q&A with RAG and tool use abilities.
 
         Args:
             knowledge: If an external knowledge string is provided,
@@ -111,14 +109,11 @@ class Assistant(FnCallAgent):
         """
 
         new_messages = self._prepend_knowledge_prompt(messages=messages, lang=lang, knowledge=knowledge, **kwargs)
-        return super()._run(messages=new_messages, lang=lang, **kwargs)
-
-    def _prepend_knowledge_prompt(self,
+        return super()._run(messages=new_messages, lang=lang, **kwa    def _prepend_knowledge_prompt(self,
                                   messages: List[Message],
-                                  lang: Literal['en', 'zh'] = 'en',
+                                  lang: Literal['en', 'zh', 'ar'] = 'en',
                                   knowledge: str = '',
-                                  **kwargs) -> List[Message]:
-        messages = copy.deepcopy(messages)
+                                  **kwargs) -> List[Message]:essages = copy.deepcopy(messages)
         if not knowledge:
             # Retrieval knowledge from files
             *_, last = self.mem.run(messages=messages, lang=lang, **kwargs)
@@ -150,7 +145,7 @@ class Assistant(FnCallAgent):
 
 
 def get_current_date_str(
-    lang: Literal['en', 'zh'] = 'en',
+    lang: Literal['en', 'zh', 'ar'] = 'en',
     hours_from_utc: Optional[int] = None,
 ) -> str:
     if hours_from_utc is None:
@@ -164,6 +159,10 @@ def get_current_date_str(
         date_str = f'当前时间：{cur_time.tm_year}年{cur_time.tm_mon}月{cur_time.tm_mday}日，星期'
         date_str += ['一', '二', '三', '四', '五', '六', '日'][cur_time.tm_wday]
         date_str += '。'
+    elif lang == 'ar':
+        days = ['الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت', 'الأحد']
+        months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر']
+        date_str = f'التاريخ الحالي: {days[cur_time.weekday()]}، {cur_time.day} {months[cur_time.month-1]} {cur_time.year}'
     else:
         raise NotImplementedError
     return date_str
